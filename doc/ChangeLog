@@ -11,6 +11,10 @@ Package author: Ankush Mitra
 Please describe any modifications that you made to the package in the
 reverse time order.
 
+Tag: V00-01-12
+2015-09-29 Chuck Yoon
+Added histogram binning
+
 Tag: V00-01-11
 2015-07-02 Christopher O'Grady
 Correct off-by-one error in calculating binsize

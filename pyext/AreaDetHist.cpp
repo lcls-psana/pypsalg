@@ -7,11 +7,15 @@ namespace pypsalg {
 
 // Constructor
 AreaDetHist::AreaDetHist (ndarray<double,3> calib_data, int valid_min,
-                          int valid_max, bool findIsolated, double minAduGap) :
-  _valid_min(valid_min),_valid_max(valid_max),
-  _findIsolated(findIsolated),_minAduGap(minAduGap)
+                          int valid_max, int bin_size, bool findIsolated, double minAduGap) :
+  _valid_min(valid_min),_valid_max(valid_max),_bin_size(bin_size),_findIsolated(findIsolated),_minAduGap(minAduGap)
 {
-  _histLength = (_valid_max-_valid_min+1)+2; // extra two pixels for underflow/overflow
+  int originalLength = _valid_max-_valid_min+1;
+  std::cout << _valid_max << "," << _valid_min << "," << _bin_size << "," << originalLength << std::endl;
+  assert(originalLength % _bin_size == 0);
+  
+  _histLength = originalLength/_bin_size + 2; // extra two pixels for underflow/overflow
+  std::cout << "histLength: " << _histLength << std::endl;
   // Important note: cspad and cspad2x2 have different ordering of segs,rows,cols.
   // cspad shape: (segs,rows,cols)
   // cspad2x2 shape: (rows,cols,segs)
@@ -20,7 +24,7 @@ AreaDetHist::AreaDetHist (ndarray<double,3> calib_data, int valid_min,
   _segs = arrayShape[0]; 
   _rows = arrayShape[1];
   _cols = arrayShape[2];
-  _numPixPerSeg = _rows*_cols;
+  _numPixPerSeg = _rows*_cols; // TODO: unused
   _histogram = make_ndarray<uint32_t>(_segs,_rows,_cols,_histLength);
   for (ndarray<uint32_t,4>::iterator p = _histogram.begin(); p != _histogram.end(); p++) {
     *p = 0;
@@ -35,15 +39,15 @@ ndarray<uint32_t, 4> AreaDetHist::get() {return _histogram;}
 
 // Fills histogram in a standard way using under/overflow stored at the first/last elements.
 void AreaDetHist::_fillHistogram(ndarray<double,3> calib_data) {
-  int val;
+  double val;
   // fill histogram
   for (unsigned int i = 0; i < _segs; i++) {
   for (unsigned int j = 0; j < _rows; j++) {
   for (unsigned int k = 0; k < _cols; k++) {
-    //val = (int) round(*p);
-    val = (int) round(calib_data[i][j][k]);   
+    val = calib_data[i][j][k];
+    int binPos = (int) floor( (val - _valid_min)/_bin_size );   
     if ( val >= _valid_min && val <= _valid_max ) { // in range
-      _histogram[i][j][k][ val-_valid_min+1 ] += 1;
+      _histogram[i][j][k][ binPos+1 ] += 1;
     } else if ( val > _valid_max ) { // too large
       _histogram[i][j][k][ _histLength-1 ] += 1;
     } else { // too small
@@ -62,7 +66,7 @@ int isIsolated(double val, double minAduGap, std::vector<double> *neighbors) {
 	for (p = neighbors->begin(); p != neighbors->end(); p++) {
 		if (val-minAduGap < *p) {
 			result = 0;
-			break;
+			return result;
 		}
 	}
 	return result;
@@ -75,10 +79,10 @@ unsigned int getPixelIndex(const unsigned int numPixPerSeg, const unsigned int C
 
 // Increment counter on histogram
 void AreaDetHist::_insertHistElement(double x, int i, int j, int k) {
-	int val = (int) round(x);   
-	if ( val >= _valid_min && val <= _valid_max ) { // in range
-		_histogram[i][j][k][ val-_valid_min+1 ] += 1;
-	} else if ( val > _valid_max ) { // too large
+	int binPos = (int) floor( (x - _valid_min)/_bin_size ); // histogram bin position  
+	if ( x >= _valid_min && x <= _valid_max ) { // in range
+		_histogram[i][j][k][ binPos+1 ] += 1;
+	} else if ( x > _valid_max ) { // too large
 		_histogram[i][j][k][ _histLength-1 ] += 1;
 	} else { // too small
 		_histogram[i][j][k][ 0 ] += 1;
@@ -91,7 +95,6 @@ void AreaDetHist::update(ndarray<double,3> calib_data)
   if (_findIsolated) {
 	double val = 0;
     int result = 0;
-	//int pixelInd = 0;
 	unsigned int j = 0;
 	unsigned int k = 0;
 

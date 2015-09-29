@@ -482,7 +482,7 @@ BOOST_PYTHON_MODULE(pypsalg_cpp)
     "  to update histogram";
   static const char AreaDetGetDoc[] =
     "No arguments.  Return histogram as numpy array.";
-  boost::python::class_<pypsalg::AreaDetHist>("AreaDetHist", AreaDetClassDoc, boost::python::init<ndarray<double,3>,int,int,bool,double>(AreaDetCtorDoc))
+  boost::python::class_<pypsalg::AreaDetHist>("AreaDetHist", AreaDetClassDoc, boost::python::init<ndarray<double,3>,int,int,int,bool,double>(AreaDetCtorDoc))
     .def("update",&pypsalg::AreaDetHist::update, AreaDetUpdateDoc)
     .def("get",&pypsalg::AreaDetHist::get, AreaDetGetDoc)
     ;

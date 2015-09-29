@@ -10,7 +10,7 @@ namespace pypsalg {
 class AreaDetHist {
  public:
 
-  AreaDetHist (ndarray<double,3> calib_data,int,int,
+  AreaDetHist (ndarray<double,3> calib_data,int,int,int,
                bool findIsolated, double minAduGap);
   virtual ~AreaDetHist ();
   
@@ -26,6 +26,7 @@ class AreaDetHist {
 
   int _valid_min;
   int _valid_max;
+  int _bin_size;
   unsigned _histLength;
   bool _findIsolated;
   double _minAduGap;

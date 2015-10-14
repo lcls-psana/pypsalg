@@ -1,5 +1,47 @@
 #!/usr/bin/env python
 #------------------------------
+
+""":py:class:`AngularIntegrationM` - holds and access hierarchical geometry for generic pixel detector
+
+Usage::
+
+    # IMPORT
+    from pypsalg.AngularIntegrationM import AngularIntegratorM
+
+    # Define test parameters
+    import numpy as np
+    img = np.ones((1200,1300), dtype=np.float32)  # generate test image as numpy array of ones of size (rows,cols) = (1200,1300)
+    mask = np.ones_like(img)                      # generate test mask for all good pixels
+    
+    rows, cols = img.shape                        # define shape parameters rows, cols - number of image rows, columns, respectively
+    rmin, rmax, nbins =100, 400, 50               # define radial histogram parameters - radial limits and number of equidistant bins
+
+    # Initialization of object and its parameters
+    ai = AngularIntegratorM()
+    ai.setParameters(rows, cols, xc=cols/2, yc=rows/2, rmin=rmin, rmax=rmax, nbins=nbins, mask=mask, phimin=-180, phimax=180)
+
+    # do angular integration for each input image and return array of bin centers and associated normalized intensities
+    bins, intensity = ai.getRadialHistogramArrays(img)
+
+    # test plot example
+    import matplotlib.pyplot as plt
+    plt.figure(figsize=(10,5), dpi=80, facecolor='w', edgecolor='w', frameon=True)
+    plt.hist(bins, bins=nbins, weights=intensity, color='b')
+    plt.show()
+
+@see :py:class:`pypsalg.AngularIntegratorM`
+
+This software was developed for the SIT project.  If you use all or 
+part of it, please give an appropriate acknowledgment.
+
+Revision: $Revision: 10664 $
+
+@version $Id: AngularIntegratorM.py 10664 2015-09-11 23:27:03Z dubrovin@SLAC.STANFORD.EDU $
+
+@author Mikhail S. Dubrovin
+"""
+
+#------------------------------
 from time import time
 import math
 import numpy as np
@@ -9,7 +51,6 @@ import numpy as np
 import matplotlib
 #matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-
 #------------------------------
 
 def valueToIndexProtected(V, VRange, phimin, phimax, phipixind) :
@@ -48,7 +89,7 @@ class AngularIntegratorM :
         self.binstat = None
 
         
-    def setParameters(self, rows, columns, xc=None, yc=None, rmin=None, rmax=None, nbins=None, mask=None, phimin=-200.0, phimax=200.0):
+    def setParameters(self, rows, columns, xc=None, yc=None, rmin=None, rmax=None, nbins=None, mask=None, phimin=-180, phimax=180):
         """Sets image, radial histogram parameters, and mask if proper normalization on number of actual pixels is desired
         """   
         # agregate input parameters
@@ -60,8 +101,8 @@ class AngularIntegratorM :
         self.xsize   = columns
         self.ysize   = rows
 
-        self.xc    = self.xsize/2                            if xc    is None else xc
-        self.yc    = self.ysize/2                            if yc    is None else yc
+        self.xc    = self.xsize/2                       if xc    is None else xc
+        self.yc    = self.ysize/2                       if yc    is None else yc
         self.rmin  = 0                                  if rmin  is None else rmin
         self.rmax  = math.sqrt(self.xc**2 + self.yc**2) if rmax  is None else rmax
         self.nbins = int((self.rmax - self.rmin)/2)     if nbins is None else nbins
@@ -103,7 +144,8 @@ class AngularIntegratorM :
         """   
         if self.rbinind.shape!=image.shape:
             raise Exception('self.rbinind.shape != image.shape')
-        bin_integral = np.bincount(self.rbinind.flatten(), weights=image.flatten(), minlength=self.rrange[2])
+        w = image*self.mask
+        bin_integral = np.bincount(self.rbinind.flatten(), weights=w.flatten(), minlength=self.rrange[2])
         #print 'bin_integral = ', bin_integral
         #print 'bin_integral.shape = ', bin_integral.shape
         if self.mask is None : return self.bincent, bin_integral

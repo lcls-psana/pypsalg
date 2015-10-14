@@ -11,6 +11,10 @@ Package author: Ankush Mitra
 Please describe any modifications that you made to the package in the
 reverse time order.
 
+Tag: V00-01-13
+2015-10-13 Mikhail Dubrovin
+In AngularIntegrationM.py fix bug in normalization in case of non-default mask.
+
 Tag: V00-01-12
 2015-09-29 Chuck Yoon
 Added histogram binning

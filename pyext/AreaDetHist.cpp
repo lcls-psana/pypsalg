@@ -3,6 +3,11 @@
 #include "AreaDetHist.h"
 #include "MsgLogger/MsgLogger.h"
 
+// Important note: cspad and cspad2x2 have different ordering of segs,rows,cols.
+// cspad shape: (segs,rows,cols)
+// cspad2x2 shape: (rows,cols,segs)
+// But dethist.py converts the cspad2x2's shape into (segs,rows,cols)
+
 namespace pypsalg {
 
 // Constructor
@@ -11,15 +16,10 @@ AreaDetHist::AreaDetHist (ndarray<double,3> calib_data, int valid_min,
   _valid_min(valid_min),_valid_max(valid_max),_bin_size(bin_size),_findIsolated(findIsolated),_minAduGap(minAduGap)
 {
   int originalLength = _valid_max-_valid_min+1;
-  std::cout << _valid_max << "," << _valid_min << "," << _bin_size << "," << originalLength << std::endl;
   assert(originalLength % _bin_size == 0);
   
   _histLength = originalLength/_bin_size + 2; // extra two pixels for underflow/overflow
-  std::cout << "histLength: " << _histLength << std::endl;
-  // Important note: cspad and cspad2x2 have different ordering of segs,rows,cols.
-  // cspad shape: (segs,rows,cols)
-  // cspad2x2 shape: (rows,cols,segs)
-  // But dethist.py converts the cspad2x2's shape into (segs,rows,cols)
+
   const unsigned int *arrayShape = calib_data.shape();  
   _segs = arrayShape[0]; 
   _rows = arrayShape[1];
@@ -53,7 +53,6 @@ void AreaDetHist::_fillHistogram(ndarray<double,3> calib_data) {
     } else { // too small
       _histogram[i][j][k][ 0 ] += 1;
     }
-    //pixelInd++;
   }
   }
   }

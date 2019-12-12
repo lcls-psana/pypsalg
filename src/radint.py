@@ -11,6 +11,7 @@ I.e. sum intensities in a ring around (x0, y0) between radii r0, r1
 EDIT 03/07/14: included azimuth limits and 'buffered' mode: set up sorting
 array and chunk limits once and reuse them!
 """
+from __future__ import print_function
 
 import numpy as np
 import time
@@ -83,12 +84,12 @@ if __name__ == "__main__" :
         # Create test image - a sinc function, centered in the middle of
         # the image  
         # Integrating in phi about center, the integral will become sin(x)    
-        print "Creating test image",
+        print("Creating test image", end=' ')
         axis_image = np.linspace(start,end,points)
         axis_image_X, axis_image_Y = np.meshgrid(axis_image, axis_image)
         axis_image_Radius = np.sqrt(axis_image_X**2 + axis_image_Y**2)
         testImage = np.abs(np.sinc(axis_image_Radius))    
-        print "Done"
+        print("Done")
 
         return testImage
 
@@ -102,11 +103,11 @@ if __name__ == "__main__" :
 
     # For sanity checking later, normalise testImage to 1.0
     testImage /= testImage.sum()
-    print "Test Image Integral: ", testImage.sum()
+    print("Test Image Integral: ", testImage.sum())
 
     
     # Now do angular integration
-    print "Doing integration"
+    print("Doing integration")
 
 
     radii, sorter, chunks, mask = prepare_radint(testImage.shape, center=[512, 512],

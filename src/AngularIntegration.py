@@ -4,6 +4,7 @@ Angular Integration Method
 Given a center, integrate over phi and histogram values as a
 function of radial distance from center.
 """
+from __future__ import print_function
 
 # Import numpy for fast array calculations & manipulation
 import numpy as np
@@ -226,12 +227,12 @@ if __name__ == "__main__" :
         # Create test image - a sinc function, centered in the middle of
         # the image  
         # Integrating in phi about center, the integral will become sin(x)    
-        print "Creating test image",
+        print("Creating test image", end=' ')
         axis_image = np.linspace(start,end,points)
         axis_image_X, axis_image_Y = np.meshgrid(axis_image, axis_image)
         axis_image_Radius = np.sqrt(axis_image_X**2 + axis_image_Y**2)
         testImage = np.abs(np.sinc(axis_image_Radius))    
-        print "Done"
+        print("Done")
 
         return testImage
 
@@ -245,7 +246,7 @@ if __name__ == "__main__" :
 
     # For sanity checking later, normalise testImage to 1.0
     testImage /= testImage.sum()
-    print "Test Image Integral: ", testImage.sum()
+    print("Test Image Integral: ", testImage.sum())
 
     
     # Instatiate the AngularIntegration class
@@ -253,14 +254,14 @@ if __name__ == "__main__" :
 
 
     # Now do angular integration
-    print "Doing integration"
+    print("Doing integration")
     radialPoints, radialInteg = pnCCDInteg.angularIntegration(testImage,
                                                               512,512,500)
     
-    print "Sanity check => histogram integral: ", radialInteg.sum()
+    print("Sanity check => histogram integral: ", radialInteg.sum())
 
     # Display images
-    print "Display images"
+    print("Display images")
     
     plt.figure(1)
     plt.clf()
@@ -278,7 +279,7 @@ if __name__ == "__main__" :
     # Move half a pixel
     #    testImage2 = MakeImage(-4.5, 5.5, 1024)
     
-    print "Doing integration"
+    print("Doing integration")
     radialPoints2, radialInteg2 = pnCCDInteg.angularIntegration(testImage,
                                                                 512.5,512,500)
         

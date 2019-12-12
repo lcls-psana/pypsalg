@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 
 def CommonModeRemoval(image, stripSize, method) :
@@ -20,7 +21,7 @@ def CommonModeRemoval(image, stripSize, method) :
     if "MEAN" == method.upper(): function = np.mean
 
     if function is None :
-        print method," is not known"
+        print(method," is not known")
         return
 
 

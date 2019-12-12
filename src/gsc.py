@@ -1,3 +1,4 @@
+from __future__ import print_function
 import psana
 import numpy as np
 
@@ -20,7 +21,7 @@ class gsc:
             self.voltsMin = -2.5;
             self.voltsPerCount = 5.0 / 0xffff
         else:
-            print 'Error: gsc16ai data voltage range not recognized'
+            print('Error: gsc16ai data voltage range not recognized')
         
     def voltages(self, evt):
         data = evt.get(psana.Gsc16ai.DataV1, self.source)

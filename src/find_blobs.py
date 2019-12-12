@@ -17,6 +17,7 @@ CHANGELOG
 
 
 """
+from __future__ import print_function
 
 
 from glob import glob
@@ -109,9 +110,9 @@ def find_blobs(image, sigma_threshold=5.0, discard_border=1,
         
         if not (len(zx) == 2) or not (len(zy) == 2):
             if not warning_printed:
-                print "WARNING: Peak algorithm confused about width of peak at", c
-                print "         Setting default peak width (5,5). This warning"
-                print "         will only be printed ONCE. Proceed w/caution!"
+                print("WARNING: Peak algorithm confused about width of peak at", c)
+                print("         Setting default peak width (5,5). This warning")
+                print("         will only be printed ONCE. Proceed w/caution!")
                 warning_printed = True
             widths.append( (5.0, 5.0) )
         else:
@@ -202,13 +203,13 @@ def _main():
     args = _parse_args()
     
     if args.run == 0:
-        print 'Analyzing data from shared memory...'
+        print('Analyzing data from shared memory...')
         try:
             ds = psana.DataSource('shmem=1_1_psana_XCS.0:stop=no')
         except:
             raise IOError('Cannot find shared memory stream.')
     else:
-        print 'Analyzing run: %d' % args.run
+        print('Analyzing run: %d' % args.run)
         ds = psana.DataSource('exp=sxra8513:run=%d' % args.run) # CHANGE THIS FOR NEW EXPT
     
     # this may also need to change for the new expt
@@ -223,14 +224,14 @@ def _main():
             image = opal.data16().copy() # this is a numpy array of the opal image
             centers, widths = find_blobs(image, sigma_threshold=args.sigma)
             n_blobs = len(centers)
-            print 'Shot %d :: found %d blobs :: %s' % (i, n_blobs, str(centers))
+            print('Shot %d :: found %d blobs :: %s' % (i, n_blobs, str(centers)))
             
             if args.view and (n_blobs > 0):
                 draw_blobs(image, centers, widths)
                 
         # if we reach the max number of shots, stop
         if i+1 == args.num_max:
-            print 'Reached max requested number of shots (%d)' % (i+1,)
+            print('Reached max requested number of shots (%d)' % (i+1,))
             break
         
     return
@@ -239,7 +240,7 @@ def _main():
 def _test_on_local_image():
     
     for f in glob('*.npy'):
-        print f
+        print(f)
         img = np.load(f)
         b = find_blobs(img)
         if len(b[0]) > 0:
@@ -264,7 +265,7 @@ def _test_on_sxra8513_data():
             centers, widths = find_blobs(opal_img, 20.0, 1, 5)
             draw_blobs(opal_img, centers, widths)
 
-            print i, opal.data16().sum()
+            print(i, opal.data16().sum())
 
     return
 

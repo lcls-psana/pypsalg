@@ -3,6 +3,7 @@ Circular Buffer: A buffer of fixed length. Data is added to buffer
 until buffer is full. Then first event is discarded and the new one
 data is appended to end of circular buffer.
 """
+from __future__ import print_function
 
 # Import Standard PYTHON modules
 import collections
@@ -23,7 +24,7 @@ class CircularBuffer :
         Constructor for Circular Buffer
         """
 
-        print "Creating Circular Buffer of size ", size
+        print("Creating Circular Buffer of size ", size)
         self.__buffer = collections.deque(maxlen=size)
 
 
@@ -51,4 +52,4 @@ if __name__ == "__main__" :
     # loop over events, append data
     for evt in range(1,100) :
         lastTenEvents.add(evt)
-        print "Buffer: ",lastTenEvents.data()
+        print("Buffer: ",lastTenEvents.data())

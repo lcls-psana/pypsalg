@@ -5,6 +5,7 @@ processes the events.
 For example, updating updating radial integral plots for different
 laser-xray delays.
 """
+from __future__ import print_function
 
 # Import Standard PYTHON modules
 import numpy as np
@@ -28,7 +29,7 @@ class EventFilter :
           - plotObj ==> 
         """
     
-        print "Creating EventFilter"
+        print("Creating EventFilter")
         
         # Data members --> make all private for now
         self.__plotList = []     # List of plots, each element will be
@@ -50,7 +51,7 @@ class EventFilter :
         Create list of value bins and list of plots
         """
 
-        print "Creating Bin List"
+        print("Creating Bin List")
         
         # create bin edges
         self.__binEdges = np.linspace(start, end, bins+1)
@@ -119,7 +120,7 @@ class EventFilter :
                 return index+1
         
         # Got here ---> must be an error
-        print "ERROR NO BIN FOUND !!!"
+        print("ERROR NO BIN FOUND !!!")
         pass
     
     
@@ -158,7 +159,7 @@ if __name__ == "__main__" :
         # generate a random number
         delay  = np.random.rand()
         data   = np.random.rand(1024,1024)
-        print "evtNum:",evtNum," delay:",delay
+        print("evtNum:",evtNum," delay:",delay)
         
         # Use random number, bin and store
         binByValue.update(delay, data, gmd=1.0)
@@ -166,6 +167,6 @@ if __name__ == "__main__" :
 
         
     # print out the internal plot list
-    print binByValue.list()
+    print(binByValue.list())
     
     

@@ -12,6 +12,7 @@ EDIT 03/07/14: included azimuth limits and 'buffered' mode: set up sorting
 array and chunk limits once and reuse them!
 """
 from __future__ import print_function
+from __future__ import division
 
 import numpy as np
 import time

@@ -2,7 +2,7 @@ from __future__ import print_function
 import psana
 import numpy as np
 
-class gsc:
+class gsc(object):
     # put the "run" in the interface, so that the user knows that a new
     # object should be made for every run (to get the correct configuration)
     def __init__(self,dataSource,run,source):

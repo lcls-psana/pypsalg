@@ -16,7 +16,7 @@ import numpy as np
 
 
 # Definition of the EventFilter class
-class EventFilter :
+class EventFilter(object) :
     """
     The EventFilter class is designed to set up an array of analyses that
     get updated given a certain value. 
@@ -154,7 +154,7 @@ if __name__ == "__main__" :
     #    binByValue.createList(-1.0,1.0,5, dataArray, "append")
 
     # loop over 100 events
-    for evtNum in xrange(0,100) :
+    for evtNum in range(0,100) :
 
         # generate a random number
         delay  = np.random.rand()

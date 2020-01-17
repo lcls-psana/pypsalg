@@ -88,7 +88,7 @@ def find_blobs(image, sigma_threshold=5.0, discard_border=1,
     labeled, num_labels = ndimage.label(binary)
     centers = ndimage.measurements.center_of_mass(binary, 
                                                   labeled,
-                                                  range(1,num_labels+1))
+                                                  list(range(1,num_labels+1)))
                                                     
                                                   
     # for each peak, find it's x- & y-width

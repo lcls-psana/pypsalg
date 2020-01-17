@@ -3,11 +3,12 @@ Histogram
 
 General purpose histogram classes. 
 """
+from __future__ import division
 import numpy as np
 import math
 
 # Histogramming classes
-class histaxis:
+class histaxis(object):
     def __init__(self,nbin,low,high):
         self.low = low
         self.high = high
@@ -18,7 +19,7 @@ class histaxis:
     def values(self):
         return np.linspace(self.low+0.5*self.binsize,self.high-0.5*self.binsize,self.nbin)
 
-class hist1d:
+class hist1d(object):
     def __init__(self,nbinx,xlow,xhigh):
         self.data = np.zeros(nbinx)
         self.nbinx = nbinx
@@ -28,7 +29,7 @@ class hist1d:
         if xbin>=0 and xbin<self.xaxis.nbin:
             self.data[xbin] += weight
 
-class hist2d:
+class hist2d(object):
     def __init__(self,nbinx,xlow,xhigh,nbiny,ylow,yhigh):
         self.data = np.zeros((nbinx,nbiny))
         self.xaxis = histaxis(nbinx,xlow,xhigh)

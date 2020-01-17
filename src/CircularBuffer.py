@@ -13,7 +13,7 @@ import collections
 
 
 # Definition of the Circular Buffer class
-class CircularBuffer : 
+class CircularBuffer(object) : 
     """
     Circular Buffer class. Events appending to end of buffer but
     maintains same size by discarding old values    

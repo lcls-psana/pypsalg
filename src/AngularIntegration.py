@@ -32,7 +32,7 @@ import numpy as np
 #                          class is defined
 
 
-class AngularIntegrator:
+class AngularIntegrator(object):
     """
     Class to perform angular integration of a 2D array (typically an image)
     """

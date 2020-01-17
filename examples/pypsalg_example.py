@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 import pypsalg
 import logging
@@ -158,26 +159,26 @@ logger.info("%s"%commonmode_data)
 
 logger.info("Creating random image for hit finder testing")
 test_image = (np.random.rand(10,10) * 100).astype(np.uint32)
-print test_image
+print(test_image)
 
 hit_count = pypsalg.count_hits(test_image, 90)
-print hit_count
+print(hit_count)
             
 sum_hit = pypsalg.sum_hits(test_image, 70,10)
-print sum_hit
+print(sum_hit)
 
 count_excess = pypsalg.count_excess(test_image, 50)
-print count_excess
+print(count_excess)
 
 sum_excess = pypsalg.sum_excess(test_image, 75, 10)
-print sum_excess
+print(sum_excess)
 
 
 
 logger.info("Testing rolling average")
 test_data = np.ones(10).astype(np.float64) \
             +  ((np.random.rand(10).astype(np.float64)-0.5) * 0.2)
-print test_data
+print(test_data)
 
 
 avg = test_data
@@ -186,5 +187,5 @@ for i in range(10) :
     test_data = np.ones(10).astype(np.float64) \
                 + ((np.random.rand(10).astype(np.float64)-0.5) * 0.2)
     avg = pypsalg.rolling_average(test_data,avg, 0.90)
-    print avg
+    print(avg)
 

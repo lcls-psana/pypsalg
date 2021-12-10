@@ -154,12 +154,12 @@ namespace {
 
     // Clone old_data
     ndarray<double,1> avg = old_data.copy();
-    
+
     // Call psalg::rolling_average
-    psalg::rolling_average<int32_t>(new_data,avg,fraction); 
-    
+    psalg::rolling_average<int32_t>(new_data,avg,fraction);
+
     // Return the avg array
-    return avg;     
+    return avg;
   }
 
 
@@ -169,13 +169,43 @@ namespace {
 
     // Clone old_data
     ndarray<double,1> avg = old_data.copy();
-        
+
     // Call psalg::rolling_average
-    psalg::rolling_average<double>(new_data,avg,fraction); 
+    psalg::rolling_average<double>(new_data,avg,fraction);
 
     // Return the avg array
-    return avg;         
-  }  
+    return avg;
+  }
+
+  // Wrapper for rolling average 2d
+  ndarray<double,2> rolling_average_2d_int32_t(const ndarray<const int32_t,2>& new_data,
+					    const ndarray<const double,2>& old_data,
+					    double fraction) {
+
+    // Clone old_data
+    ndarray<double,2> avg = old_data.copy();
+
+    // Call psalg::rolling_average
+    psalg::rolling_average<int32_t>(new_data,avg,fraction);
+
+    // Return the avg array
+    return avg;
+  }
+
+
+  ndarray<double,2> rolling_average_2d_double(const ndarray<const double,2>& new_data,
+					   const ndarray<const double,2>& old_data,
+					   double fraction)  {
+
+    // Clone old_data
+    ndarray<double,2> avg = old_data.copy();
+
+    // Call psalg::rolling_average
+    psalg::rolling_average<double>(new_data,avg,fraction);
+
+    // Return the avg array
+    return avg;
+  }
 
 }; //namespace
 
@@ -447,9 +477,14 @@ BOOST_PYTHON_MODULE(pypsalg_cpp)
   boost::python::def("common_mode_median",commonModeMedian_double);
   */
 
-  boost::python::def("commonmode_lroe", &psalg::commonModeLROE,
+  boost::python::def("commonmode_lroe",
+         static_cast<ndarray<const double,1> (*)(const ndarray<const int32_t,1>&, const ndarray<const double,1>&)>(&psalg::commonModeLROE),
 		     "Calculate a common-mode in left-right halves for odd-even pixels");
-  boost::python::def("project",&psalg::project,
+  boost::python::def("commonmode_lroe",
+         static_cast<ndarray<const double,2> (*)(const ndarray<const int32_t,2>&, const ndarray<const double,2>&)>(&psalg::commonModeLROE),
+         "Calculate a common-mode in left-right halves for odd-even pixels");
+  boost::python::def("project",
+         static_cast<ndarray<double,1> (*)(const ndarray<const double,2>&, const unsigned*, const unsigned*, double, unsigned)>(&psalg::project),
 		     "Project ndarray\n\n"   
 		     "Creates a 1-dimensional response array from the"
 		     "projection of an N-dimensional ndarray over a region of interest (inclusive).\n\n"		     
@@ -457,11 +492,14 @@ BOOST_PYTHON_MODULE(pypsalg_cpp)
 		     "All other dimensions are integrated over the ROI"
 		     );
   
-  
-  
   // -- ROLLING AVERAGE 
   boost::python::def("rolling_average",rolling_average_int32_t);
   boost::python::def("rolling_average",rolling_average_double,
+		     "Accumulate a rolling average where each accumulation contributes\n"
+		     "a fixed fraction to the average."
+		     );
+  boost::python::def("rolling_average",rolling_average_2d_int32_t);
+  boost::python::def("rolling_average",rolling_average_2d_double,
 		     "Accumulate a rolling average where each accumulation contributes\n"
 		     "a fixed fraction to the average."
 		     );

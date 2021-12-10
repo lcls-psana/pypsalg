@@ -11,6 +11,11 @@ Package author: Ankush Mitra
 Please describe any modifications that you made to the package in the
 reverse time order.
 
+Tag: V01-00-01
+2021-12-09 Daniel Damiani
+Fix boost python wrappers for some functions from psalg that now have
+additional signatures.
+
 Tag: V00-01-13
 2015-10-13 Mikhail Dubrovin
 In AngularIntegrationM.py fix bug in normalization in case of non-default mask.

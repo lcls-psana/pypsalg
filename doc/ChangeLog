@@ -11,10 +11,18 @@ Package author: Ankush Mitra
 Please describe any modifications that you made to the package in the
 reverse time order.
 
+Tag: V01-00-02
+2024-11-27 Mikhail Dubrovin
+- replace deprecated np.int > np.int32, np.float > np.float32, code cleaning
+	modified:   src/AngularIntegrationM.py
+	modified:   src/radint.py
+
 Tag: V01-00-01
 2021-12-09 Daniel Damiani
 Fix boost python wrappers for some functions from psalg that now have
 additional signatures.
+
+Tag: V00-02-00
 
 Tag: V00-01-13
 2015-10-13 Mikhail Dubrovin
@@ -54,10 +62,10 @@ Add in Chuck's area-detector histogramming (AreaDetHist).
 
 Tag: V00-01-04
 2015-04-03 Ankush Mitra
-Added missing psalg functions.  Hit finder, rolling average, and other added.  
-Only missing function is psalgs commond mode subtraction algorithm. 
+Added missing psalg functions.  Hit finder, rolling average, and other added.
+Only missing function is psalgs commond mode subtraction algorithm.
 Documentation strings are also included
-	
+
 Tag: V00-01-03
 2015-02-23 Christopher O'Grady
 - Add values method to histogram axis, to be used for plotting.
@@ -78,7 +86,7 @@ Tag: V00-01-00
         => Uses BOOST to wrap native C/C++ functions for PYTHON
 - Removed  ScaleByN, chi2, and pypsalg_c native Python C API files
 - added example file
-	
+
 Tag: V00-00-07
 2014-10-29 Christopher O'Grady
 - Throttle warning messages in find_blobs.py.  Fix missing imports

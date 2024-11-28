@@ -12,7 +12,7 @@ Usage::
     import numpy as np
     img = np.ones((1200,1300), dtype=np.float32)  # generate test image as numpy array of ones of size (rows,cols) = (1200,1300)
     mask = np.ones_like(img)                      # generate test mask for all good pixels
-    
+
     rows, cols = img.shape                        # define shape parameters rows, cols - number of image rows, columns, respectively
     rmin, rmax, nbins =100, 400, 50               # define radial histogram parameters - radial limits and number of equidistant bins
 
@@ -31,7 +31,7 @@ Usage::
 
 @see :py:class:`pypsalg.AngularIntegratorM`
 
-This software was developed for the SIT project.  If you use all or 
+This software was developed for the SIT project.  If you use all or
 part of it, please give an appropriate acknowledgment.
 
 Revision: $Revision: 10664 $
@@ -40,20 +40,13 @@ Revision: $Revision: 10664 $
 
 @author Mikhail S. Dubrovin
 """
-from __future__ import print_function
-from __future__ import division
 
-#------------------------------
 from time import time
 import math
 import numpy as np
-#import scipy as sp
-#import scipy.ndimage
-
 import matplotlib
 #matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-#------------------------------
 
 def valueToIndexProtected(V, VRange, phimin, phimax, phipixind) :
     """Input: V - numpy array of values,
@@ -67,21 +60,19 @@ def valueToIndexProtected(V, VRange, phimin, phimax, phipixind) :
     indarr = np.int32( factor * (V-Vmin) )
     return np.select([phipixind<phimin, phipixind>phimax, V==Vmax, indarr<0, indarr>Nbins1], [0, 0, Nbins1, 0, 0], default=indarr)
 
-#------------------------------
 
 def divideArraysSafely(num, den) :
     """Per evement divides numpy arrays result = num/den. Protected for 0 values. Arrays should have the same size."""
     if num.shape != den.shape :
         print('divideArraysSafely: non-equal array shapes for numerator and denumerator: ', num.shape, den.shape)
-    num_corr =  np.select([den<1], [0], default=num)    
-    den_corr =  np.select([den<1], [1], default=den)    
+    num_corr =  np.select([den<1], [0], default=num)
+    den_corr =  np.select([den<1], [1], default=den)
     return num_corr/den_corr
 
-#------------------------------
 
 class AngularIntegratorM(object) :
     """Angular integration of a 2D numpy array"""
-    
+
     def __init__(self):
         self.center  = None
         self.rrange  = None
@@ -90,10 +81,10 @@ class AngularIntegratorM(object) :
         self.rbinind = None
         self.binstat = None
 
-        
+
     def setParameters(self, rows, columns, xc=None, yc=None, rmin=None, rmax=None, nbins=None, mask=None, phimin=-180, phimax=180):
         """Sets image, radial histogram parameters, and mask if proper normalization on number of actual pixels is desired
-        """   
+        """
         # agregate input parameters
         self.mask    = mask
         # flip these to make it more intuitive for users who will use
@@ -116,14 +107,14 @@ class AngularIntegratorM(object) :
         x = np.arange(self.xsize) - self.xc
         y = np.arange(self.ysize) - self.yc
         xgrid, ygrid = np.meshgrid(x,y)
- 
+
         half_bin = 0.5*(self.rmax-self.rmin)/self.nbins
         self.bincent = np.linspace(self.rmin+half_bin, self.rmax-half_bin, self.nbins)
 
         self.rpixind  = np.sqrt(xgrid**2 + ygrid**2)
 
         # cpo and zxing flipped y here so that the angles correspond well to matplotlib plots.
-        # this may or may not be the best answer.  
+        # this may or may not be the best answer.
         phipixind  = np.arctan2(-ygrid,xgrid) * 180 / np.pi
 
         self.rbinind  = valueToIndexProtected(self.rpixind, self.rrange, phimin, phimax, phipixind)
@@ -142,8 +133,8 @@ class AngularIntegratorM(object) :
 
     def getRadialHistogramArrays(self, image):
         """Fills radial histogram with image intensities and do normalization on actual pixel number if the mask is provided
-           and returns two arrays with radial bin centers and integrated (normalized) intensities. 
-        """   
+           and returns two arrays with radial bin centers and integrated (normalized) intensities.
+        """
         if self.rbinind.shape!=image.shape:
             raise Exception('self.rbinind.shape != image.shape')
         w = image*self.mask
@@ -162,11 +153,7 @@ class AngularIntegratorM(object) :
     def getRBinIndexMap(self) :
         return self.rbinind
 
-#------------------------------
-#------------------------------
 #-------- FOR TEST ONLY -------
-#------------------------------
-#------------------------------
 
 def drawImage(arr, img_range=None, amp_range=None, figsize=(10,10)) :    # range = (left, right, low, high), amp_range=(zmin,zmax)
     fig = plt.figure(figsize=figsize, dpi=80, facecolor='w', edgecolor='w', frameon=True)
@@ -177,27 +164,25 @@ def drawImage(arr, img_range=None, amp_range=None, figsize=(10,10)) :    # range
     if amp_range != None : imAxes.set_clim(amp_range[0],amp_range[1])
     colbar = fig.colorbar(imAxes, pad=0.03, fraction=0.04, shrink=1.0, aspect=40, orientation='horizontal')
 
-#------------------------------
 
-def drawGraph(x,y) : 
+def drawGraph(x,y) :
     fig = plt.figure(figsize=(6,4), dpi=80, facecolor='w', edgecolor='w', frameon=True)
     #fig.subplots_adjust(left=0.05, bottom=0.03, right=0.98, top=0.98, wspace=0.2, hspace=0.1)
     #figAxes = fig.add_subplot(111)
     ax = fig.add_axes([0.15, 0.10, 0.78, 0.86])
     ax.plot(x,y,'b-')
 
-#------------------------------
 
 def MakeImage(shape=(1024,1024)) :
     # Create test image - a sinc function, centered in the middle of
-    # the image  
-    # Integrating in phi about center, the integral will become sin(x)    
+    # the image
+    # Integrating in phi about center, the integral will become sin(x)
     print("Creating test image", end=' ')
 
     xsize, ysize = shape
     ratio = float(ysize)/float(xsize)
     print('ratio = ', ratio)
-    xmin, xmax = -4, 6 
+    xmin, xmax = -4, 6
     ymin, ymax = -7*ratio, 3*ratio
 
     print('\nxmin, xmax, xsize = ', xmin, xmax, xsize)
@@ -207,20 +192,19 @@ def MakeImage(shape=(1024,1024)) :
     yarr = np.linspace(ymin, ymax, ysize)
     xgrid, ygrid = np.meshgrid(xarr, yarr)
     rgrid = np.sqrt(xgrid**2 + ygrid**2)
-    image = np.abs(np.sinc(rgrid))    
+    image = np.abs(np.sinc(rgrid))
     return image
 
-#----------------------------------
 
 def test_image_from_file(fname) :
 
     image = np.load(fname)
-    mask  = np.ones_like(image, dtype=np.int)
+    mask  = np.ones_like(image, dtype=np.int32)
 
     print('image.shape =', image.shape)
-    
+
     ysize, xsize = image.shape
-    
+
     t0_sec = time()
     angint = AngularIntegratorM()
     angint.setParameters(xsize, ysize, xc=1005, yc=690, rmin=0, rmax=1000, nbins=1000, mask=mask)
@@ -238,17 +222,16 @@ def test_image_from_file(fname) :
     #plt.plot(bincent, integral)
     drawGraph(bincent, integral)
 
-    plt.show()    
+    plt.show()
 
-#----------------------------------
 
 def test_main() :
 
     image = MakeImage(shape=(2000,1000))
-    mask  = np.ones_like(image, dtype=np.int)
-    
+    mask  = np.ones_like(image, dtype=np.int32)
+
     ysize, xsize = image.shape
-    
+
     t0_sec = time()
     angint = AngularIntegratorM()
     angint.setParameters(xsize, ysize, xc=xsize*0.4, yc=ysize*0.7, rmin=0, rmax=1000, nbins=1000, mask=mask)
@@ -266,13 +249,12 @@ def test_main() :
     #plt.plot(bincent, integral)
     drawGraph(bincent, integral)
 
-    plt.show()    
- 
-#------------------------------
+    plt.show()
+
 
 if __name__ == "__main__" :
 
     #test_main()
     test_image_from_file('/reg/neh/home1/dubrovin/LCLS/rel-psanamon/cspadCalib_norm.npy')
 
-#------------------------------
+# EOF

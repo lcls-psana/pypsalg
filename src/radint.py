@@ -11,8 +11,6 @@ I.e. sum intensities in a ring around (x0, y0) between radii r0, r1
 EDIT 03/07/14: included azimuth limits and 'buffered' mode: set up sorting
 array and chunk limits once and reuse them!
 """
-from __future__ import print_function
-from __future__ import division
 
 import numpy as np
 import time
@@ -39,7 +37,7 @@ def compute_chunks(shape, center, r0, r1, dr, phi0=0, phi1=2 * np.pi):
     r1 = np.min([rmax, r1])
     radius = np.arange(r0, r1 + 1, np.min([dr, r1 - r0]))
     phi = np.abs(phi1 - phi0)
-    chunks = np.array([phi / 2 * r ** 2 for r in radius], dtype=np.int)
+    chunks = np.array([phi / 2 * r ** 2 for r in radius], dtype=np.int32)
     return radius, chunks
 
 
@@ -83,20 +81,18 @@ def benchmark(runs=1000):
 if __name__ == "__main__" :
     def MakeImage(start, end, points) :
         # Create test image - a sinc function, centered in the middle of
-        # the image  
-        # Integrating in phi about center, the integral will become sin(x)    
+        # the image
+        # Integrating in phi about center, the integral will become sin(x)
         print("Creating test image", end=' ')
         axis_image = np.linspace(start,end,points)
         axis_image_X, axis_image_Y = np.meshgrid(axis_image, axis_image)
         axis_image_Radius = np.sqrt(axis_image_X**2 + axis_image_Y**2)
-        testImage = np.abs(np.sinc(axis_image_Radius))    
+        testImage = np.abs(np.sinc(axis_image_Radius))
         print("Done")
 
         return testImage
 
 
-
-    
     # Import matplotlib for drawing
     import matplotlib.pyplot as plt
 
@@ -106,7 +102,6 @@ if __name__ == "__main__" :
     testImage /= testImage.sum()
     print("Test Image Integral: ", testImage.sum())
 
-    
     # Now do angular integration
     print("Doing integration")
 
@@ -114,3 +109,6 @@ if __name__ == "__main__" :
     radii, sorter, chunks, mask = prepare_radint(testImage.shape, center=[512, 512],
                                                  r0=0, r1=512, dr=2)
     radialIntgral = radint_buffered(testImage, sorter, chunks)
+
+
+    # EOF
